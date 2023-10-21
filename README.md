@@ -20,7 +20,7 @@ func Bad() error { // <-  should call defer derrors.Wrap fist.
 
 Build your `derrfirst` binary by writing `main.go` like below.
 
-```
+```go
 package main
 
 import (
