@@ -1,4 +1,4 @@
-module dfirst
+module github.com/qawatake/dfirst
 
 go 1.21.3
 
@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/hashicorp/go-version v1.2.1 // indirect
 	github.com/otiai10/copy v1.2.0 // indirect
 	github.com/tenntenn/modver v1.0.1 // indirect

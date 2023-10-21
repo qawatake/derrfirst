@@ -1,6 +1,9 @@
 package a
 
-import "fmt"
+import (
+	"fmt"
+	fmt1 "fmt"
+)
 
 func f() { // ok
 	fmt.Println("f")
@@ -28,4 +31,8 @@ func H() { // ok
 
 func I() { // ok
 	defer fmt.Println()
+}
+
+func J() { // ok
+	defer fmt1.Println()
 }
