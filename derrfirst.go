@@ -38,14 +38,13 @@ type runner struct {
 	pkgPath    string
 	funcName   string
 	ignorePkgs map[string]struct{}
-	pkgs       map[*types.Package]struct{}
 }
 
 func (r *runner) run(pass *analysis.Pass) (any, error) {
 	if _, ok := r.ignorePkgs[pass.Pkg.Path()]; ok {
 		return nil, nil
 	}
-	r.setPkgs(pass)
+	pkgs := derrpkgs(pass, r.pkgPath)
 	cmaps := pass.ResultOf[commentmap.Analyzer].(comment.Maps)
 	for _, file := range pass.Files {
 		for _, decl := range file.Decls {
@@ -77,7 +76,7 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
-					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f).Pkg()]; !ok {
+					if _, ok := pkgs[pass.TypesInfo.ObjectOf(f).Pkg()]; !ok {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
@@ -87,7 +86,7 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
-					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f.Sel).Pkg()]; !ok {
+					if _, ok := pkgs[pass.TypesInfo.ObjectOf(f.Sel).Pkg()]; !ok {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
@@ -106,13 +105,14 @@ func (r runner) pkgName() string {
 	return pp[len(pp)-1]
 }
 
-func (r *runner) setPkgs(pass *analysis.Pass) {
-	r.pkgs = make(map[*types.Package]struct{})
+func derrpkgs(pass *analysis.Pass, pkgPath string) (pkgs map[*types.Package]struct{}) {
+	pkgs = make(map[*types.Package]struct{})
 	for _, pkg := range pass.Pkg.Imports() {
-		if pkg.Path() == r.pkgPath {
-			r.pkgs[pkg] = struct{}{}
+		if pkg.Path() == pkgPath {
+			pkgs[pkg] = struct{}{}
 		}
 	}
+	return pkgs
 }
 
 func returnError(pass *analysis.Pass, fn *ast.FuncDecl) bool {
