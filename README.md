@@ -4,7 +4,13 @@ Linter `derrfirst` forces every public function to begin with a deferring call o
 By using derrfirst, you can prevent public functions from returning without wrapping errors.
 
 ```go
-func F() error { // <-  should call defer derrors.Wrap fist.
+func Good() error {
+  defer derrors.Wrap(&err, "Good")
+  doStuff()
+  return nil
+}
+
+func Bad() error { // <-  should call defer derrors.Wrap fist.
   doOtherStuff()
   return nil
 }
