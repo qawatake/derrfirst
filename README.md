@@ -1,5 +1,11 @@
 # derrfirst
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/qawatake/derrfirst.svg)](https://pkg.go.dev/github.com/qawatake/derrfirst)
+
+[![test](https://github.com/qawatake/derrfirst/actions/workflows/test.yaml/badge.svg)](https://github.com/qawatake/derrfirst/actions/workflows/test.yaml)
+
+[![codecov](https://codecov.io/gh/qawatake/derrfirst/graph/badge.svg?token=er2K6likVZ)](https://codecov.io/gh/qawatake/derrfirst)
+
 Linter `derrfirst` forces every public function to begin with a deferring call of some function like [derrors.Wrap](https://github.com/golang/pkgsite/blob/5f0513d53cff8382238b5f8c78e8317d2b4ad06d/internal/derrors/derrors.go#L240).
 By using derrfirst, you can prevent public functions from returning without wrapping errors.
 
