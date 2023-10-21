@@ -28,8 +28,8 @@ func J() error { // ok because j begins by deferring a call to fmt1.Println wher
 	return nil
 }
 
-//lint:ignore dfirst reason
-func K() error { // ok because k is ignored by dfirst.
+//lint:ignore derrfirst reason
+func K() error { // ok because k is ignored by derrfirst.
 	fmt.Println("F")
 	return nil
 }

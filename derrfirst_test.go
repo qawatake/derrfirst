@@ -1,15 +1,15 @@
-package dfirst_test
+package derrfirst_test
 
 import (
 	"testing"
 
 	"github.com/gostaticanalysis/testutil"
-	"github.com/qawatake/dfirst"
+	"github.com/qawatake/derrfirst"
 	"golang.org/x/tools/go/analysis/analysistest"
 )
 
 // TestAnalyzer is a test for Analyzer.
 func TestAnalyzer(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
-	analysistest.Run(t, testdata, dfirst.NewAnalyzer("fmt", "Println"), "a")
+	analysistest.Run(t, testdata, derrfirst.NewAnalyzer("fmt", "Println", "a/ignore"), "a/...")
 }

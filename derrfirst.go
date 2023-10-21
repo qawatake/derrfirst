@@ -1,4 +1,4 @@
-package dfirst
+package derrfirst
 
 import (
 	"go/ast"
@@ -10,14 +10,19 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const doc = "dfirst requires that every public function begins by deferring a call to a specific function"
+const doc = "derrfirst requires that every public function begins by deferring a call to a specific function"
 
-const name = "dfirst"
+const name = "derrfirst"
 
-func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
+func NewAnalyzer(pkgPath string, funcName string, ignorePkgs ...string) *analysis.Analyzer {
+	ignored := make(map[string]struct{})
+	for _, pkg := range ignorePkgs {
+		ignored[pkg] = struct{}{}
+	}
 	r := runner{
-		pkgPath:  pkgPath,
-		funcName: funcName,
+		pkgPath:    pkgPath,
+		funcName:   funcName,
+		ignorePkgs: ignored,
 	}
 	return &analysis.Analyzer{
 		Name: name,
@@ -30,12 +35,16 @@ func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 }
 
 type runner struct {
-	pkgPath  string
-	funcName string
-	pkgs     map[*types.Package]struct{}
+	pkgPath    string
+	funcName   string
+	ignorePkgs map[string]struct{}
+	pkgs       map[*types.Package]struct{}
 }
 
 func (r *runner) run(pass *analysis.Pass) (any, error) {
+	if _, ok := r.ignorePkgs[pass.Pkg.Path()]; ok {
+		return nil, nil
+	}
 	r.setPkgs(pass)
 	cmaps := pass.ResultOf[commentmap.Analyzer].(comment.Maps)
 	for _, file := range pass.Files {
@@ -65,27 +74,27 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 				switch f := first.Call.Fun.(type) {
 				case *ast.Ident:
 					if f.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f).Pkg()]; !ok {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				case *ast.SelectorExpr:
 					if f.Sel.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f.Sel).Pkg()]; !ok {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				}
 			default:
-				pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
+				pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 			}
 		}
 	}

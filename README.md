@@ -1,6 +1,2 @@
-# dfirst
+# derrfirst
 
-## TODO
-
-- [ ] ignorePackagePath
-- [ ] ignoreComment
