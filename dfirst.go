@@ -6,10 +6,9 @@ import (
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/passes/inspect"
 )
 
-const doc = "dfirst is ..."
+const doc = "dfirst requires that every public function begins by deferring a call to a specific function"
 
 func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 	r := runner{
@@ -20,9 +19,6 @@ func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 		Name: "dfirst",
 		Doc:  doc,
 		Run:  r.run,
-		Requires: []*analysis.Analyzer{
-			inspect.Analyzer,
-		},
 	}
 }
 
@@ -55,34 +51,34 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 				switch f := first.Call.Fun.(type) {
 				case *ast.Ident:
 					if f.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgPath, r.funcName)
+						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
 						continue
 					}
 					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f).Pkg()]; !ok {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgPath, r.funcName)
+						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				case *ast.SelectorExpr:
 					if f.Sel.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.packageName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
 						continue
 					}
 					if _, ok := r.pkgs[pass.TypesInfo.ObjectOf(f.Sel).Pkg()]; !ok {
-						pass.Reportf(decl.Pos(), "should call %s.%s", r.packageName(), r.funcName)
+						pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				}
 			default:
-				pass.Reportf(decl.Pos(), "should call %s.%s", r.packageName(), r.funcName)
+				pass.Reportf(decl.Pos(), "should call %s.%s", r.pkgName(), r.funcName)
 			}
 		}
 	}
 	return nil, nil
 }
 
-func (r runner) packageName() string {
+func (r runner) pkgName() string {
 	pp := strings.Split(r.pkgPath, "/")
 	return pp[len(pp)-1]
 }
