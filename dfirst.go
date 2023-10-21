@@ -56,6 +56,9 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 			if fn.Body.List == nil {
 				continue
 			}
+			if !returnError(pass, fn) {
+				continue
+			}
 			first := fn.Body.List[0]
 			switch first := first.(type) {
 			case *ast.DeferStmt:
@@ -101,4 +104,16 @@ func (r *runner) setPkgs(pass *analysis.Pass) {
 			r.pkgs[pkg] = struct{}{}
 		}
 	}
+}
+
+func returnError(pass *analysis.Pass, fn *ast.FuncDecl) bool {
+	if fn.Type.Results == nil {
+		return false
+	}
+	for _, arg := range fn.Type.Results.List {
+		if types.Identical(pass.TypesInfo.TypeOf(arg.Type), types.Universe.Lookup("error").Type()) {
+			return true
+		}
+	}
+	return false
 }

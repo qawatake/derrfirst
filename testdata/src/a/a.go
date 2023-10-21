@@ -5,32 +5,51 @@ import (
 	fmt1 "fmt"
 )
 
-func f() { // ok because f is private.
-	fmt.Println("f")
+func f() error { // ok because f is private.
+	return nil
 }
 
-func F() { // want "should call"
-	fmt.Println("F")
+func F() error { // want "should call"
+	return nil
 }
 
-func G() { // want "should call"
+func G() error { // want "should call"
 	defer f()
+	return nil
 }
 
-func H() { // ok because h begins by deferring a call to fmt.Println.
+func H() error { // ok because h begins by deferring a call to fmt.Println.
 	defer fmt.Println("a")
+	return nil
 }
 
-func J() { // ok because j begins by deferring a call to fmt1.Println where fmt1 is alias of fmt.
+func J() error { // ok because j begins by deferring a call to fmt1.Println where fmt1 is alias of fmt.
 	defer fmt1.Println()
+	return nil
 }
 
 //lint:ignore dfirst reason
-func K() { // ok because k is ignored by dfirst.
+func K() error { // ok because k is ignored by dfirst.
 	fmt.Println("F")
+	return nil
 }
 
 // lint:ignore otherlinter reason
-func L() { // want "should call"
+func L() error { // want "should call"
 	fmt.Println("F")
+	return nil
+}
+
+func M() (int, error) { // ok
+	defer fmt.Println("a")
+	return 0, nil
+}
+
+func N() (int, error) { // want "should call"
+	fmt.Println("a")
+	return 0, nil
+}
+
+func P() { // ok because f does not return error.
+	fmt.Println()
 }
