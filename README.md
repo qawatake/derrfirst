@@ -14,6 +14,12 @@ func Bad() error { // <-  should call defer derrors.Wrap fist.
   doOtherStuff()
   return nil
 }
+
+//lint:ignore derrfirst this is because ...
+func Ignored() error {
+  doOtherStuff()
+  return nil
+}
 ```
 
 ## How to use
