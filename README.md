@@ -15,3 +15,28 @@ func Bad() error { // <-  should call defer derrors.Wrap fist.
   return nil
 }
 ```
+
+## How to use
+
+Build your `derrfirst` binary by writing `main.go` like below.
+
+```
+package main
+
+import (
+	"github.com/qawatake/derrfirst"
+	"golang.org/x/tools/go/analysis/unitchecker"
+)
+
+func main() {
+  unitchecker.Main(
+    derrfirst.NewAnalyzer("your/derror/pkg", "Wrap", "pkg/to/be/ignored"),
+  )
+}
+```
+
+Then, run `go vet` with your `derrfirst` binary.
+
+```sh
+go vet -vettool=/path/to/your/derrfirst ./...
+```
