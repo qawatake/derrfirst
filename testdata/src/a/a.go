@@ -24,3 +24,13 @@ func H() { // ok because h begins by deferring a call to fmt.Println.
 func J() { // ok because j begins by deferring a call to fmt1.Println where fmt1 is alias of fmt.
 	defer fmt1.Println()
 }
+
+//lint:ignore dfirst reason
+func K() { // ok because k is ignored by dfirst.
+	fmt.Println("F")
+}
+
+// lint:ignore otherlinter reason
+func L() { // want "should call"
+	fmt.Println("F")
+}

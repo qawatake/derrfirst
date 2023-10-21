@@ -5,10 +5,14 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/gostaticanalysis/comment"
+	"github.com/gostaticanalysis/comment/passes/commentmap"
 	"golang.org/x/tools/go/analysis"
 )
 
 const doc = "dfirst requires that every public function begins by deferring a call to a specific function"
+
+const name = "dfirst"
 
 func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 	r := runner{
@@ -16,9 +20,12 @@ func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 		funcName: funcName,
 	}
 	return &analysis.Analyzer{
-		Name: "dfirst",
+		Name: name,
 		Doc:  doc,
 		Run:  r.run,
+		Requires: []*analysis.Analyzer{
+			commentmap.Analyzer,
+		},
 	}
 }
 
@@ -30,8 +37,12 @@ type runner struct {
 
 func (r *runner) run(pass *analysis.Pass) (any, error) {
 	r.setPkgs(pass)
+	cmaps := pass.ResultOf[commentmap.Analyzer].(comment.Maps)
 	for _, file := range pass.Files {
 		for _, decl := range file.Decls {
+			if cmaps.IgnorePos(decl.Pos(), name) {
+				continue
+			}
 			fn, ok := decl.(*ast.FuncDecl)
 			if !ok {
 				continue
