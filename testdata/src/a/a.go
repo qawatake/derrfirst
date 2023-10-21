@@ -5,7 +5,7 @@ import (
 	fmt1 "fmt"
 )
 
-func f() { // ok
+func f() { // ok because f is private.
 	fmt.Println("f")
 }
 
@@ -13,26 +13,14 @@ func F() { // want "should call"
 	fmt.Println("F")
 }
 
-func g() { // ok
-	defer f()
-}
-
 func G() { // want "should call"
 	defer f()
 }
 
-func h() { // ok
+func H() { // ok because h begins by deferring a call to fmt.Println.
 	defer fmt.Println("a")
 }
 
-func H() { // ok
-	defer fmt.Println("a")
-}
-
-func I() { // ok
-	defer fmt.Println()
-}
-
-func J() { // ok
+func J() { // ok because j begins by deferring a call to fmt1.Println where fmt1 is alias of fmt.
 	defer fmt1.Println()
 }
