@@ -53,3 +53,21 @@ func N() (int, error) { // want "should call"
 func P() { // ok because f does not return error.
 	fmt.Println()
 }
+
+func Println() {}
+
+func Q() error { // want "should call"
+	defer Println()
+	return nil
+}
+
+func R() int { // ok because f does not return error.
+	return 0
+}
+
+func S() error { // want "should call"
+	defer fmt.Print()
+	return nil
+}
+
+func T() // ok becasue T has no body.
