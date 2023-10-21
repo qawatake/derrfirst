@@ -2,11 +2,19 @@ package a
 
 import "fmt"
 
-func f() { // want "should call"
+func f() { // ok
 	fmt.Println("f")
 }
 
-func g() { // want "should call"
+func F() { // want "should call"
+	fmt.Println("F")
+}
+
+func g() { // ok
+	defer f()
+}
+
+func G() { // want "should call"
 	defer f()
 }
 
@@ -14,6 +22,10 @@ func h() { // ok
 	defer fmt.Println("a")
 }
 
-func i() { // ok
+func H() { // ok
+	defer fmt.Println("a")
+}
+
+func I() { // ok
 	defer fmt.Println()
 }

@@ -41,6 +41,9 @@ func (r runner) run(pass *analysis.Pass) (any, error) {
 			if !ok {
 				continue
 			}
+			if !fn.Name.IsExported() {
+				continue
+			}
 			if fn.Body == nil {
 				continue
 			}
