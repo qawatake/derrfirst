@@ -34,8 +34,8 @@ Build your `derrfirst` binary by writing `main.go` like below.
 package main
 
 import (
-	"github.com/qawatake/derrfirst"
-	"golang.org/x/tools/go/analysis/unitchecker"
+  "github.com/qawatake/derrfirst"
+  "golang.org/x/tools/go/analysis/unitchecker"
 )
 
 func main() {
