@@ -9,7 +9,8 @@ import (
 )
 
 // TestAnalyzer is a test for Analyzer.
-func TestAnalyzer_third_party(t *testing.T) {
+func TestAnalyzery(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
 	analysistest.Run(t, testdata, dwrap.NewAnalyzer("github.com/qawatake/derrors", "Wrap", "b/ignore"), "b/...")
+	analysistest.Run(t, testdata, dwrap.NewAnalyzer("c", "Wrap"), "c/...")
 }
