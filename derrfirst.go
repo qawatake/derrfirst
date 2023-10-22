@@ -5,6 +5,7 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/gostaticanalysis/analysisutil"
 	"github.com/gostaticanalysis/comment"
 	"github.com/gostaticanalysis/comment/passes/commentmap"
 	"golang.org/x/tools/go/analysis"
@@ -44,7 +45,6 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 	if _, ok := r.ignorePkgs[pass.Pkg.Path()]; ok {
 		return nil, nil
 	}
-	pkgs := derrpkgs(pass, r.pkgPath)
 	cmaps := pass.ResultOf[commentmap.Analyzer].(comment.Maps)
 	for _, file := range pass.Files {
 		for _, decl := range file.Decls {
@@ -72,21 +72,15 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 			case *ast.DeferStmt:
 				switch f := first.Call.Fun.(type) {
 				case *ast.Ident:
-					if f.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
-						continue
-					}
-					if _, ok := pkgs[pass.TypesInfo.ObjectOf(f).Pkg()]; !ok {
+					obj := pass.TypesInfo.ObjectOf(f)
+					if x(pass, r.pkgPath, r.funcName) != obj {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				case *ast.SelectorExpr:
-					if f.Sel.Name != r.funcName {
-						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
-						continue
-					}
-					if _, ok := pkgs[pass.TypesInfo.ObjectOf(f.Sel).Pkg()]; !ok {
+					obj := pass.TypesInfo.ObjectOf(f.Sel)
+					if x(pass, r.pkgPath, r.funcName) != obj {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
@@ -105,14 +99,8 @@ func (r runner) pkgName() string {
 	return pp[len(pp)-1]
 }
 
-func derrpkgs(pass *analysis.Pass, pkgPath string) (pkgs map[*types.Package]struct{}) {
-	pkgs = make(map[*types.Package]struct{})
-	for _, pkg := range pass.Pkg.Imports() {
-		if pkg.Path() == pkgPath {
-			pkgs[pkg] = struct{}{}
-		}
-	}
-	return pkgs
+func x(pass *analysis.Pass, pkgPath, funcName string) types.Object {
+	return analysisutil.ObjectOf(pass, pkgPath, funcName)
 }
 
 func returnError(pass *analysis.Pass, fn *ast.FuncDecl) bool {
