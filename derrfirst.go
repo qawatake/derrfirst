@@ -11,7 +11,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const doc = "derrfirst requires that every public function begins by deferring a call to a specific function"
+const doc = "derrfirst forces a public function to begin by deferring a call to a specific function"
 
 const name = "derrfirst"
 
@@ -64,7 +64,7 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 			if fn.Body.List == nil {
 				continue
 			}
-			if !returnError(pass, fn) {
+			if !returnsError(pass, fn) {
 				continue
 			}
 			first := fn.Body.List[0]
@@ -72,15 +72,17 @@ func (r *runner) run(pass *analysis.Pass) (any, error) {
 			case *ast.DeferStmt:
 				switch f := first.Call.Fun.(type) {
 				case *ast.Ident:
-					obj := pass.TypesInfo.ObjectOf(f)
-					if x(pass, r.pkgPath, r.funcName) != obj {
+					got := pass.TypesInfo.ObjectOf(f)
+					want := analysisutil.ObjectOf(pass, r.pkgPath, r.funcName)
+					if got != want {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
 					continue
 				case *ast.SelectorExpr:
-					obj := pass.TypesInfo.ObjectOf(f.Sel)
-					if x(pass, r.pkgPath, r.funcName) != obj {
+					got := pass.TypesInfo.ObjectOf(f.Sel)
+					want := analysisutil.ObjectOf(pass, r.pkgPath, r.funcName)
+					if got != want {
 						pass.Reportf(decl.Pos(), "should call defer %s.%s on the first line", r.pkgName(), r.funcName)
 						continue
 					}
@@ -99,11 +101,7 @@ func (r runner) pkgName() string {
 	return pp[len(pp)-1]
 }
 
-func x(pass *analysis.Pass, pkgPath, funcName string) types.Object {
-	return analysisutil.ObjectOf(pass, pkgPath, funcName)
-}
-
-func returnError(pass *analysis.Pass, fn *ast.FuncDecl) bool {
+func returnsError(pass *analysis.Pass, fn *ast.FuncDecl) bool {
 	if fn.Type.Results == nil {
 		return false
 	}
