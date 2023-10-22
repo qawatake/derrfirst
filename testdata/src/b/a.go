@@ -20,6 +20,17 @@ func private_func_is_ok() error { // ok because f is private.
 	return nil
 }
 
+type S struct{}
+
+func (s *S) Good_method() (err error) { // ok because Good_method begins with derrors.Wrap.
+	defer derrors.Wrap(&err, "x")
+	return nil
+}
+
+func (s *S) Bad_method() error { // want "should call"
+	return nil
+}
+
 func Good_alias() (err error) { // ok because Good_alias begins with defer de.Wrap where de is an alias of derrors.
 	defer de.Wrap(&err, "x")
 	return nil
