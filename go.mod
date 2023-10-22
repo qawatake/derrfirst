@@ -1,4 +1,4 @@
-module github.com/qawatake/derrfirst
+module github.com/qawatake/dwrap
 
 go 1.21.3
 

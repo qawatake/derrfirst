@@ -41,8 +41,8 @@ func Return_no_error() int { // ok because Return_no_error does not return error
 
 func EmptyBody() error // ok because EmptyBody does not have body.
 
-//lint:ignore derrfirst reason
-func Ignored() error { // ok because Ignored is ignored by derrfirst.
+//lint:ignore dwrap reason
+func Ignored() error { // ok because Ignored is ignored by dwrap.
 	return nil
 }
 

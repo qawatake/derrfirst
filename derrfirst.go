@@ -1,4 +1,4 @@
-package derrfirst
+package dwrap
 
 import (
 	"go/ast"
@@ -11,9 +11,9 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const doc = "derrfirst forces a public function to begin by deferring a call to a specific function"
+const doc = "dwrap forces a public function to begin by deferring a call to a specific function"
 
-const name = "derrfirst"
+const name = "dwrap"
 
 func NewAnalyzer(pkgPath string, funcName string, ignorePkgs ...string) *analysis.Analyzer {
 	ignored := make(map[string]struct{})
