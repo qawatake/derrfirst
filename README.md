@@ -40,7 +40,7 @@ import (
 
 func main() {
   unitchecker.Main(
-    dwrap.NewAnalyzer("your/derrors/pkg", "Wrap", "pkg/to/be/ignored"),
+    dwrap.NewAnalyzer("your/derrors/pkg", "Wrap"),
   )
 }
 ```

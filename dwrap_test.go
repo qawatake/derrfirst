@@ -11,6 +11,6 @@ import (
 // TestAnalyzer is a test for Analyzer.
 func TestAnalyzery(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
-	analysistest.Run(t, testdata, dwrap.NewAnalyzer("github.com/qawatake/derrors", "Wrap", "b/ignore"), "b/...")
+	analysistest.Run(t, testdata, dwrap.NewAnalyzer("github.com/qawatake/derrors", "Wrap"), "b/...")
 	analysistest.Run(t, testdata, dwrap.NewAnalyzer("c", "Wrap"), "c/...")
 }

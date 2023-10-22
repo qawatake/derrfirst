@@ -15,15 +15,10 @@ const doc = "dwrap forces a public function to begin by deferring a call to a sp
 
 const name = "dwrap"
 
-func NewAnalyzer(pkgPath string, funcName string, ignorePkgs ...string) *analysis.Analyzer {
-	ignored := make(map[string]struct{})
-	for _, pkg := range ignorePkgs {
-		ignored[pkg] = struct{}{}
-	}
+func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 	r := runner{
-		pkgPath:    pkgPath,
-		funcName:   funcName,
-		ignorePkgs: ignored,
+		pkgPath:  pkgPath,
+		funcName: funcName,
 	}
 	return &analysis.Analyzer{
 		Name: name,
@@ -36,15 +31,11 @@ func NewAnalyzer(pkgPath string, funcName string, ignorePkgs ...string) *analysi
 }
 
 type runner struct {
-	pkgPath    string
-	funcName   string
-	ignorePkgs map[string]struct{}
+	pkgPath  string
+	funcName string
 }
 
 func (r *runner) run(pass *analysis.Pass) (any, error) {
-	if _, ok := r.ignorePkgs[pass.Pkg.Path()]; ok {
-		return nil, nil
-	}
 	cmaps := pass.ResultOf[commentmap.Analyzer].(comment.Maps)
 	for _, file := range pass.Files {
 		for _, decl := range file.Decls {
