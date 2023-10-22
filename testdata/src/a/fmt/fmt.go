@@ -1,3 +1,0 @@
-package fmt
-
-func Println() {}
