@@ -13,3 +13,8 @@ func TestAnalyzer(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
 	analysistest.Run(t, testdata, derrfirst.NewAnalyzer("fmt", "Println", "a/ignore"), "a/...")
 }
+
+func TestAnalyzer_third_party(t *testing.T) {
+	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
+	analysistest.Run(t, testdata, derrfirst.NewAnalyzer("github.com/qawatake/derrors", "Wrap", "b/ignore"), "b/...")
+}
