@@ -11,7 +11,7 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const doc = "dwrap forces a public function to begin by deferring a call to a specific function"
+const doc = "dwrap forces every public function to begin with a deferring call of an error wrapping function."
 
 const name = "dwrap"
 

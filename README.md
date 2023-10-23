@@ -4,7 +4,7 @@
 [![test](https://github.com/qawatake/dwrap/actions/workflows/test.yaml/badge.svg)](https://github.com/qawatake/dwrap/actions/workflows/test.yaml)
 [![codecov](https://codecov.io/gh/qawatake/dwrap/graph/badge.svg?token=er2K6likVZ)](https://codecov.io/gh/qawatake/dwrap)
 
-Linter `dwrap` forces every public function to begin with a deferring call of a error wrapping function like [derrors.Wrap](https://github.com/golang/pkgsite/blob/5f0513d53cff8382238b5f8c78e8317d2b4ad06d/internal/derrors/derrors.go#L240).
+Linter `dwrap` forces every public function to begin with a deferring call of an error wrapping function like [derrors.Wrap](https://github.com/golang/pkgsite/blob/5f0513d53cff8382238b5f8c78e8317d2b4ad06d/internal/derrors/derrors.go#L240).
 By using `dwrap`, you can prevent functions from returning without wrapping errors.
 
 ```go
