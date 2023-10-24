@@ -5,9 +5,9 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/gostaticanalysis/analysisutil"
 	"github.com/gostaticanalysis/comment"
 	"github.com/gostaticanalysis/comment/passes/commentmap"
+	"github.com/qawatake/dwrap/internal/analysisutil"
 	"golang.org/x/tools/go/analysis"
 )
 

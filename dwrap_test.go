@@ -13,4 +13,5 @@ func TestAnalyzery(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
 	analysistest.Run(t, testdata, dwrap.NewAnalyzer("github.com/qawatake/derrors", "Wrap"), "b/...")
 	analysistest.Run(t, testdata, dwrap.NewAnalyzer("c", "Wrap"), "c/...")
+	analysistest.Run(t, testdata, dwrap.NewAnalyzer("github.com/qawatake/a", "Wrap"), "github.com/qawatake/a/...")
 }
