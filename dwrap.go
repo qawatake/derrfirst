@@ -11,9 +11,9 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
-const doc = "dwrap forces every public function to begin with a deferring call of an error wrapping function."
-
 const name = "dwrap"
+const doc = "dwrap forces every public function to begin with a deferring call of an error wrapping function"
+const url = "https://pkg.go.dev/github.com/qawatake/dwrap"
 
 func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 	r := runner{
@@ -23,6 +23,7 @@ func NewAnalyzer(pkgPath string, funcName string) *analysis.Analyzer {
 	return &analysis.Analyzer{
 		Name: name,
 		Doc:  doc,
+		URL:  url,
 		Run:  r.run,
 		Requires: []*analysis.Analyzer{
 			commentmap.Analyzer,
